@@ -10,19 +10,20 @@ public class Server {
         System.out.println("Сервер вкл");
         while (true) {
             try (
-                    Socket clientSocket = serverSocket.accept();//жду подключения
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                    PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true)
+                    Socket socket = serverSocket.accept();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true)
             ) {
-                System.out.printf("Сервер принял клиента по порту %s\n", clientSocket.getPort());
-                writer.println("Введите число или end");
-            String str;
-                while((str = bufferedReader.readLine()) != null){
-                    if(str.equalsIgnoreCase("end")){
+                while (true) {
+                    System.out.printf("подключен клиент, порт-> %s\n", socket.getPort());
+                    printWriter.println("Введите число или end: ");
+                    String str = bufferedReader.readLine();
+                    if (str.equalsIgnoreCase("end")) {
                         break;
                     }
-                    writer.println(fib(Integer.parseInt(str)));
+                    printWriter.println(fib(Integer.parseInt(str)));
                 }
+
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
